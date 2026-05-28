@@ -1,0 +1,17 @@
+version: "3.9"
+
+services:
+
+  app:
+    build:
+      context: . # where is the Dockerfile, go build the image
+      args:
+        - DEV=true
+    ports:
+      - "8000:8000" # open a door so your browser can reach the app
+    volumes:
+      - ./app:/app # sync your code live so no rebuild needed
+    command: >
+      sh -c "python manage.py runserver 0.0.0.0:8000" # what to do when container wakes up
+    environment:
+      - DEBUG=1 # settings and config passed into the app

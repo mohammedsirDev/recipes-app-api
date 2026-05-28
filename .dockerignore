@@ -1,0 +1,16 @@
+# Git - ignore git history and config, docker dont need them
+.git
+.gitignore
+
+# Docker - no point copying docker config inside docker itself
+.docker
+
+# Python - ignore auto generated files, python recreates them anyway
+**/__pycache__/
+**/*.pyc
+**/*.pyo
+
+# Virtual environments - we install packages fresh inside docker using requirements.txt
+.env/
+.venv/
+venv/

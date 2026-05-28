@@ -1,0 +1,26 @@
+---
+
+name: Checks # name of this workflow
+
+on: [push] # run this workflow every time you push code to github
+
+jobs:
+  test-lint:
+    name: Test and lint # name of the job
+    runs-on: ubuntu-20.04 # run on ubuntu server
+    steps:
+      - name: Login to Docker Hub # step 1 - login to dockerhub to pull images
+        uses: docker/login-action@v1
+        with:
+          username: ${{ secrets.DOCKERHUB_USER }} # dockerhub username from github secrets
+          password: ${{ secrets.DOCKERHUB_TOKEN }} # dockerhub token from github secrets
+
+      - name: Checkout # step 2 - pull our code from github onto the server
+        uses: actions/checkout@v2
+
+      - name: Test # step 3 - run django tests inside the container
+        run: docker-compose run --rm app sh -c "python manage.py test"
+      - name:lint
+        run: docker-compose run --rm app sh -c "flake8"
+        # --rm means delete the container after test finishes
+        # sh -c means open shell and run the command inside quotes
