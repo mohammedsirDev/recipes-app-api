@@ -1,26 +1,28 @@
 ---
 
-name: Checks # name of this workflow
+name: Checks # name of the workflow shown in github
 
-on: [push] # run this workflow every time you push code to github
+on: [push] # trigger this workflow every time you push code to github
 
 jobs:
   test-lint:
-    name: Test and lint # name of the job
-    runs-on: ubuntu-20.04 # run on ubuntu server
+    name: Test and Lint # name of the job
+    runs-on: ubuntu-24.04 # fresh ubuntu machine github spins up to run everything on
     steps:
-      - name: Login to Docker Hub # step 1 - login to dockerhub to pull images
-        uses: docker/login-action@v1
+      - name: Login to Docker Hub # step 1 - login so github can pull our docker image
+        uses: docker/login-action@v3
         with:
-          username: ${{ secrets.DOCKERHUB_USER }} # dockerhub username from github secrets
-          password: ${{ secrets.DOCKERHUB_TOKEN }} # dockerhub token from github secrets
+          username: ${{ secrets.DOCKERHUB_USER }} # dockerhub username stored safely in github secrets
+          password: ${{ secrets.DOCKERHUB_TOKEN }} # dockerhub token stored safely in github secrets
 
-      - name: Checkout # step 2 - pull our code from github onto the server
-        uses: actions/checkout@v2
+      - name: Checkout # step 2 - download our code onto the ubuntu machine
+        uses: actions/checkout@v4
 
-      - name: Test # step 3 - run django tests inside the container
-        run: docker-compose run --rm app sh -c "python manage.py test"
-      - name:lint
-        run: docker-compose run --rm app sh -c "flake8"
-        # --rm means delete the container after test finishes
-        # sh -c means open shell and run the command inside quotes
+      - name: Test # step 3 - run all django tests inside the container
+        run: docker compose run --rm app sh -c "python manage.py test"
+        # --rm deletes container after test finishes
+
+      - name: Lint # step 4 - check code quality with flake8
+        run: docker compose run --rm app sh -c "flake8"
+        # flake8 checks for bad code style and errors
+        # if flake8 finds any issues the whole workflow fails
