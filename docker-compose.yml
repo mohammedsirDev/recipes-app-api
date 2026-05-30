@@ -1,7 +1,6 @@
 version: "3.9"
 
 services:
-
   app:
     build:
       context: . # where is the Dockerfile, go build the image
@@ -12,6 +11,26 @@ services:
     volumes:
       - ./app:/app # sync your code live so no rebuild needed
     command: >
-      sh -c "python manage.py runserver 0.0.0.0:8000" # what to do when container wakes up
+      sh -c "python manage.py wait_for_db &&
+             python manage.py migrate &&
+             python manage.py runserver 0.0.0.0:8000"  # what to do when container wakes up
     environment:
-      - DEBUG=1 # settings and config passed into the app
+      - DEBUG=1            # settings and config passed into the app
+      - DB_HOST=db         # address of database, db = name of service below
+      - DB_NAME=devdb      # database name
+      - DB_USER=devuser    # database username
+      - DB_PASS=changeme   # database password
+    depends_on:
+      - db                 # dont start django until database is ready
+
+  db: # postgresql container
+    image: postgres:13-alpine    # official postgresql image, no dockerfile needed
+    volumes:
+      - dev-data:/var/lib/postgresql/data # save data here so it never gets lost
+    environment:
+      - POSTGRES_DB=devdb          # create database with this name
+      - POSTGRES_USER=devuser      # create user with this name
+      - POSTGRES_PASSWORD=changeme # create password for that user
+
+volumes:
+  dev-data: # docker saves database data here permanently on your machine

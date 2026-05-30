@@ -11,7 +11,7 @@ https://docs.djangoproject.com/en/3.2/ref/settings/
 """
 
 from pathlib import Path
-
+import os
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -37,6 +37,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'core',
 ]
 
 MIDDLEWARE = [
@@ -73,10 +74,14 @@ WSGI_APPLICATION = 'config.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
 
+# replace with postgresql
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql', # use postgresql not sqlite
+        'HOST': os.environ.get('DB_HOST'),          # reads DB_HOST from docker-compose
+        'NAME': os.environ.get('DB_NAME'),          # reads DB_NAME from docker-compose
+        'USER': os.environ.get('DB_USER'),          # reads DB_USER from docker-compose
+        'PASSWORD': os.environ.get('DB_PASS'),      # reads DB_PASS from docker-compose
     }
 }
 

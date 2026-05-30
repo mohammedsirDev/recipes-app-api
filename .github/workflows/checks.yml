@@ -19,7 +19,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Test # step 3 - run all django tests inside the container
-        run: docker compose run --rm app sh -c "python manage.py test"
+        run: docker compose run --rm app sh -c "python manage.py wait_for_db && python manage.py test"
         # --rm deletes container after test finishes
 
       - name: Lint # step 4 - check code quality with flake8
