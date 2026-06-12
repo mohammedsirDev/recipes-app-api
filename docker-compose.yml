@@ -10,6 +10,8 @@ services:
       - "8000:8000" # open a door so your browser can reach the app
     volumes:
       - ./app:/app # sync your code live so no rebuild needed
+      - dev-static-data:/vol/web
+
     command: >
       sh -c "python manage.py wait_for_db &&
              python manage.py migrate &&
@@ -20,6 +22,7 @@ services:
       - DB_NAME=devdb      # database name
       - DB_USER=devuser    # database username
       - DB_PASS=changeme   # database password
+      - DEBUG=1
     depends_on:
       - db                 # dont start django until database is ready
 
@@ -34,3 +37,4 @@ services:
 
 volumes:
   dev-data: # docker saves database data here permanently on your machine
+  dev-static-data:
