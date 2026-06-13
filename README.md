@@ -29,7 +29,7 @@ cp .env.sample .env
 docker-compose up
 ```
 
-API will be available at `http://localhost:8000/api/`
+API will be available at `http://localhost:8000/api/docs`
 
 ## Running Tests
 
